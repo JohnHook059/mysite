@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block body %}
+    {{ name }}<br>
+    {% if missing or wrong_old_pass or passwords_not_match %}
+        {% if missing %}Все поля обязательны к заполнению{%elif wrong_old_pass%}Старый пароль не подходит{%else%}Пароли не совпадают{%endif%}
+    {% endif %}
+    <table width="254"><tr><td>
+        <form action="/profile" method="post">
+            {% csrf_token %}
+            <table width="100%">
+            <tr>
+            <td>Старый пароль</td><td><input type="password" name="old_password"></td>
+            </tr>
+            <tr>
+            <td>Новый пароль</td><td><input type="password" name="password"></td>
+            </tr>
+            <tr>
+            <td>Подтверждение</td><td><input type="password" name="password_1"></td>
+            </tr>
+            </table>
+            <input type="submit" value="Отправить">
+        </form>
+    </td></tr></table>
+
+{% endblock %}

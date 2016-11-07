@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block body %}
+    {{ chat_name }}
+    <br>
+    {% if chat_error %}Нет такого пользователя{%endif%}
+    <br>
+    {% for item in history %}
+        <b>{{ item.inp }}</b>
+        {{ item.text }}
+        <b>{{ item.time }}</b>
+        <br>
+
+    {% endfor %}
+
+    <form action="/chat/{{ chat_name }}/" method="post">
+        {% csrf_token %}
+        <input type="text" name="message">
+        <input type="submit" value="message">
+    </form>
+
+{% endblock %}
