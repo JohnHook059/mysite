@@ -11,3 +11,6 @@ class MessageForm(forms.Form):
 
 class ProfileForm(forms.Form):
     pass
+
+class InviteForm(forms.Form):
+    pass

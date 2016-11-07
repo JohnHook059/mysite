@@ -9,4 +9,5 @@ urlpatterns = [
     url(r'^logout_page$', views.logout_page, name='logout_page'),
     url(r'^chat/(?P<chat_name>.+)/$', views.chat),
     url(r'^chats$', views.chats, name='chats'),
+    url(r'^invites$', views.invites, name='invites'),
 ]

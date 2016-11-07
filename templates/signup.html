@@ -1,22 +1,25 @@
 {% extends "base.html" %}
 
 {% block body %}
-    {% if login_used or missing or passwords_not_match %}
-        {% if login_used %}Логин уже используется{%elif missing%}Все поля обязательны к заполнению{%else%}Пароли не совпадают{%endif%}
+    {% if login_used or missing or passwords_not_match or incorrect_invite %}
+        {% if login_used %}Логин уже используется{%elif missing%}Все поля обязательны к заполнению{%elif passwords_not_match%}Пароли не совпадают{% else %}Неверный инвайт{%endif%}
     {% endif %}
     <table width="254"><tr><td>
         <form action="/signup" method="post">
             {% csrf_token %}
             <table width="100%">
-            <tr>
-            <td>Логин</td><td><input type="text" name="login"></td>
-            </tr>
-            <tr>
-            <td>Пароль</td><td><input type="password" name="password"></td>
-            </tr>
-            <tr>
-            <td>Подтверждение</td><td><input type="password" name="password_1"></td>
-            </tr>
+                <tr>
+                <td>Инвайт</td><td><input type="text" name="invite"></td>
+                </tr>
+                <tr>
+                <td>Логин</td><td><input type="text" name="login"></td>
+                </tr>
+                <tr>
+                <td>Пароль</td><td><input type="password" name="password"></td>
+                </tr>
+                <tr>
+                <td>Подтверждение</td><td><input type="password" name="password_1"></td>
+                </tr>
             </table>
             <input type="submit" value="Отправить">
         </form>

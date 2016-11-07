@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from .forms import SignupForm, LoginForm, MessageForm, ProfileForm
+from .forms import SignupForm, LoginForm, MessageForm, ProfileForm, InviteForm
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from .models import Message
+from .models import Message, Invite
+from django.contrib.admin.views.decorators import staff_member_required
+from .generators import invite_generator
 
 def index(request):
     return render(request, 'index.html', {'user': request.user})
@@ -13,19 +15,26 @@ def signup(request):
         return redirect('/')
     if request.method == 'POST':
         form = SignupForm(request.POST)
-        if not (form.data['login'] and form.data['password'] and form.data['password_1']):
+        if not (form.data['invite'] and form.data['login'] and form.data['password'] and form.data['password_1']):
             return redirect('/signup?missing')
+        if len(Invite.objects.filter(is_used=False, invite=form.data['invite'])) == 0:
+            return redirect('/signup?incorrect_invite')
         if form.data['password'] != form.data['password_1']:
             return redirect('/signup?passwords_not_match')
         try:
             user = User.objects.create_user(form.data['login'], password=form.data['password'])
             user.save()
+            invite = Invite.objects.filter(is_used=False, invite=form.data['invite'])[0]
+            invite.is_used = True
+            invite.owner = user.username
+            invite.save()
         except IntegrityError:
             return redirect('/signup?login_used')
         login(request, authenticate(username=form.data['login'], password=form.data['password']))
         return redirect('/')
     else:
-        return render(request, 'signup.html', {'login_used': 'login_used' in request.GET, 'missing': 'missing' in request.GET, 'passwords_not_match': 'passwords_not_match' in request.GET})
+        return render(request, 'signup.html', {'login_used': 'login_used' in request.GET, 'missing': 'missing' in request.GET, 'passwords_not_match': 'passwords_not_match' in request.GET,
+                                               'incorrect_invite': 'incorrect_invite' in request.GET})
 
 
 def signin(request):
@@ -90,3 +99,15 @@ def chats(request):
     if not request.user.is_authenticated():
         return redirect('/')
     return render(request, 'chats.html', {'users': User.objects.all()})
+
+@staff_member_required
+def invites(request):
+    if not request.user.is_superuser:
+        return redirect('/')
+    if request.method == 'POST':
+        invite = Invite()
+        invite.author = request.user.username
+        invite.invite = invite_generator()
+        invite.save()
+    history = Invite.objects.all()
+    return render(request, 'invites.html', {'invites': history})

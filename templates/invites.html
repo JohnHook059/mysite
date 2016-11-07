@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <form action="/invites" method="post">
+        {% csrf_token %}
+        <input type="submit" value="generate">
+    </form>
+    <table>
+        <tr>
+            <th>author</th>
+            <th>is_used</th>
+            <th>owner</th>
+            <th>invite</th>
+            <th>time</th>
+        </tr>
+        {% for invite in invites %}
+            <tr>
+                <td>{{ invite.author }}</td>
+                <td>{{ invite.is_used }}</td>
+                <td>{{ invite.owner }}</td>
+                <td>{{ invite.invite }}</td>
+                <td>{{ invite.time }}</td>
+            </tr>
+        {%  endfor %}
+    </table>
+
+{% endblock %}

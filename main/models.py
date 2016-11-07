@@ -10,3 +10,13 @@ class Message(models.Model):
 
     class Meta:
         ordering = ['-time']
+
+class Invite(models.Model):
+    author = models.CharField(max_length=100)
+    is_used = models.BooleanField(default=False)
+    owner = models.CharField(max_length=100)
+    invite = models.CharField(max_length=100)
+    time = models.DateTimeField(default=now)
+
+    class Meta:
+        ordering = ['-time']
